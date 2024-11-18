@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from selenium.webdriver.remote.webdriver import WebDriver
 from fastapi_cache.decorator import cache
 from app.core.celery_app import celery_app
@@ -38,6 +38,7 @@ class BaseModule(ABC):
         def execute_workflow(**kwargs):
             from app.core.selenium_manager import SeleniumManager
             selenium_manager = SeleniumManager()
+            selenium_manager.command_executor = 'http://selenium:4444/wd/hub'
             
             with selenium_manager.get_driver() as driver:
                 raw_data = self.selenium_workflow(driver, **kwargs)
